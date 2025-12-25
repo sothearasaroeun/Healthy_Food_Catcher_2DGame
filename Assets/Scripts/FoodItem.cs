@@ -1,18 +1,29 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class FoodItem : MonoBehaviour
+public class Food : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public bool isHealthy;
 
-    // Update is called once per frame
-    void Update()
+    void OnTriggerEnter2D(Collider2D other)
     {
-        
+        Debug.Log("Triggered with: " + other.name);
+
+        if (!other.CompareTag("Player"))
+            return;
+
+        Debug.Log("Player caught food!");
+
+        if (isHealthy)
+        {
+            Debug.Log("Healthy food caught");
+            GameManager.instance.OnHealthyFoodCaught();
+        }
+        else
+        {
+            Debug.Log("Junk food caught");
+            GameManager.instance.OnJunkFoodCaught();
+        }
+
+        Destroy(gameObject);
     }
 }
