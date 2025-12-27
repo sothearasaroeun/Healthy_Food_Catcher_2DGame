@@ -1,40 +1,30 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class FoodSpawner : MonoBehaviour
 {
-    public GameObject[] healthyFoods;
-    public GameObject[] junkFoods;
-
-    public float minX = -3f;
-    public float maxX = 3f;
-    public float spawnIntervalMin = 0.5f;
-    public float spawnIntervalMax = 1.5f;
+    public GameObject[] foods;      // UI food prefabs
+    public RectTransform canvas;    // Canvas parent
+    public float spawnRate = 1.5f;
+    public float xRange = 500f;     // UI units (pixels)
 
     void Start()
     {
-        StartCoroutine(SpawnFood());
+        InvokeRepeating(nameof(SpawnFood), 1f, spawnRate);
     }
 
-    System.Collections.IEnumerator SpawnFood()
+    void SpawnFood()
     {
-        while (true)
-        {
-            yield return new WaitForSeconds(Random.Range(spawnIntervalMin, spawnIntervalMax));
+        // Pick random food
+        int index = Random.Range(0, foods.Length);
 
-            // Randomly choose type: 0 = healthy, 1 = junk
-            bool spawnHealthy = (Random.value > 0.5f);
+        // Instantiate UI object
+        GameObject food = Instantiate(foods[index], canvas);
 
-            GameObject prefabToSpawn;
+        // Set position using RectTransform
+        RectTransform foodRect = food.GetComponent<RectTransform>();
 
-            if (spawnHealthy)
-                prefabToSpawn = healthyFoods[Random.Range(0, healthyFoods.Length)];
-            else
-                prefabToSpawn = junkFoods[Random.Range(0, junkFoods.Length)];
-
-            // Pick random X position
-            Vector3 spawnPos = new Vector3(Random.Range(minX, maxX), transform.position.y, 0);
-
-            Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
-        }
+        float randomX = Random.Range(-xRange, xRange);
+        foodRect.anchoredPosition = new Vector2(randomX, 600f); // spawn from top
+        foodRect.localScale = Vector3.one;
     }
 }
